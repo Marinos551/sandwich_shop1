@@ -16,11 +16,19 @@ class App extends StatelessWidget {
         appBar: AppBar(title: const Text('Sandwich Counter')),
         body: Center(
           child: Container(
-            width: 300,       // Bigger width
-            height: 150,      // Bigger height
-            color: Colors.blue, // Background color
-            alignment: Alignment.center, // Center the text
-            child: const OrderItemDisplay(5, 'Footlong'), // 5 sandwiches
+            width: 350,       // Bigger container width
+            height: 200,      // Bigger container height
+            color: Colors.blue,
+            padding: const EdgeInsets.all(10), // Add padding so text doesn’t touch edges
+            child: const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Space widgets evenly horizontally
+              crossAxisAlignment: CrossAxisAlignment.center,    // Center vertically
+              children: [
+                OrderItemDisplay(3, 'Footlong'),
+                OrderItemDisplay(5, 'Six-inch'),
+                OrderItemDisplay(2, 'Wrap'),
+              ],
+            ),
           ),
         ),
       ),
@@ -38,8 +46,8 @@ class OrderItemDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       '$quantity $itemType sandwich(es): ${'🥪' * quantity}',
-      style: const TextStyle(fontSize: 18, color: Colors.white), // White text for contrast
-      textAlign: TextAlign.center, // Center text inside container
+      style: const TextStyle(fontSize: 16, color: Colors.white),
+      textAlign: TextAlign.center,
     );
   }
 }
