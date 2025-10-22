@@ -9,35 +9,14 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false, // Removes the DEBUG banner
+    return MaterialApp(
+      title: 'Sandwich Shop App',
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Color(0xFFF8F4FF), // Light purple background
-        body: Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 30),
-              Text(
-                'Sandwich Counter',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Spacer(),
-              Center(
-                child: Text(
-                  'Welcome to the Sandwich Shop!',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-              Spacer(),
-            ],
-          ),
+        appBar: AppBar(title: const Text('Sandwich Counter')),
+        body: const Center(
+          // ✅ Using our new custom widget here
+          child: OrderItemDisplay(5, 'Footlong'),
         ),
       ),
     );
@@ -45,13 +24,16 @@ class App extends StatelessWidget {
 }
 
 class OrderItemDisplay extends StatelessWidget {
-  final String itemType;
   final int quantity;
+  final String itemType;
 
   const OrderItemDisplay(this.quantity, this.itemType, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Text('$quantity $itemType sandwich(es): ${'🥪' * quantity}');
+    return Text(
+      '$quantity $itemType sandwich(es): ${'🥪' * quantity}',
+      style: const TextStyle(fontSize: 18),
+    );
   }
 }
