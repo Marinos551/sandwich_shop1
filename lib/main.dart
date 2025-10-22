@@ -14,9 +14,14 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(title: const Text('Sandwich Counter')),
-        body: const Center(
-          // ✅ Using our new custom widget here
-          child: OrderItemDisplay(5, 'Footlong'),
+        body: Center(
+          child: Container(
+            width: 300,       // Bigger width
+            height: 150,      // Bigger height
+            color: Colors.blue, // Background color
+            alignment: Alignment.center, // Center the text
+            child: const OrderItemDisplay(5, 'Footlong'), // 5 sandwiches
+          ),
         ),
       ),
     );
@@ -33,7 +38,8 @@ class OrderItemDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       '$quantity $itemType sandwich(es): ${'🥪' * quantity}',
-      style: const TextStyle(fontSize: 18),
+      style: const TextStyle(fontSize: 18, color: Colors.white), // White text for contrast
+      textAlign: TextAlign.center, // Center text inside container
     );
   }
 }
