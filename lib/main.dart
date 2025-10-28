@@ -49,7 +49,7 @@ class App extends StatelessWidget {
       ),
     );
   }
-}
+
 
 class OrderScreen extends StatefulWidget {
   final int maxQuantity;
@@ -94,14 +94,14 @@ void _decreaseQuantity() {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ElevatedButton(
-                onPressed: () => print('Add button pressed!'),
-                child: const Text('Add'),
-              ),
-              ElevatedButton(
-                onPressed: () => print('Remove button pressed!'),
-                child: const Text('Remove'),
-              ),
+             ElevatedButton(
+  onPressed: _increaseQuantity,
+  child: const Text('Add'),
+),
+ElevatedButton(
+  onPressed: _decreaseQuantity,
+  child: const Text('Remove'),
+),
             ],
           ),
         ],
