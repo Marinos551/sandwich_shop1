@@ -63,21 +63,32 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   int _quantity = 0;
+  bool _isFootlong = true; // New state variable
+  final TextEditingController _notesController = TextEditingController(); // New controller
 
   void _increaseQuantity() {
     if (_quantity < widget.maxQuantity) {
       setState(() {
         _quantity++;
         // Add this temporary line to see debugging in action
-        print('Current quantity: $_quantity');
+        print('Current quantity: $_quantity; notes: "${_notesController.text}"');
       });
     }
   }
 
   void _decreaseQuantity() {
     if (_quantity > 0) {
-      setState(() => _quantity--);
+      setState(() {
+        _quantity--;
+        print('Current quantity: $_quantity; notes: "${_notesController.text}"');
+      });
     }
+  }
+
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
   }
 
   @override
@@ -90,11 +101,53 @@ class _OrderScreenState extends State<OrderScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            // Add size selection
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ToggleButtons(
+                  isSelected: [_isFootlong, !_isFootlong],
+                  onPressed: (index) {
+                    setState(() {
+                      _isFootlong = index == 0;
+                    });
+                  },
+                  children: const [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Footlong'),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('Six-inch'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            // show current selection & notes
             OrderItemDisplay(
               _quantity,
-              'Footlong',
-              isFootlong: true,
+              'sandwich',
+              isFootlong: _isFootlong,
+              notes: _notesController.text,
             ),
+            const SizedBox(height: 16),
+            // Notes input - user types before pressing Add/Remove
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              child: TextField(
+                controller: _notesController,
+                decoration: const InputDecoration(
+                  hintText: 'Add a note (e.g., "no onions", "extra pickles")',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -135,24 +188,26 @@ class _OrderScreenState extends State<OrderScreen> {
 }
 
 class OrderItemDisplay extends StatelessWidget {
-  final int quantity;
-  final String itemType;
-  final bool isFootlong;
+   final int quantity;
+   final String itemType;
+   final bool isFootlong;
+   final String? notes; // new optional notes field
 
-  const OrderItemDisplay(
-    this.quantity,
-    this.itemType, {
-    super.key,
+   const OrderItemDisplay(
+     this.quantity,
+     this.itemType, {
+     super.key,
     required this.isFootlong,
-  });
+    this.notes,
+   });
 
-  @override
-  Widget build(BuildContext context) {
-    final sandwichType = isFootlong ? 'Footlong' : 'Six-inch';
-    return Text(
-      '$quantity $sandwichType sandwich(es): ${'🥪' * quantity}',
+   @override
+   Widget build(BuildContext context) {
+     final sandwichType = isFootlong ? 'Footlong' : 'Six-inch';
+     return Text(
+      '$quantity $sandwichType sandwich(es): ${'🥪' * quantity}${(notes != null && notes!.isNotEmpty) ? '\nNote: $notes' : ''}',
       style: const TextStyle(fontSize: 16, color: Colors.black),
       textAlign: TextAlign.center,
-    );
-  }
-}
+     );
+   }
+ }
