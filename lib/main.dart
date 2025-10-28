@@ -28,7 +28,7 @@ Widget build(BuildContext context) {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const OrderItemDisplay(5, 'Footlong'),
+            const OrderItemDisplay(5, 'Footlong', isFootlong: true),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -93,12 +93,13 @@ class _OrderScreenState extends State<OrderScreen> {
             OrderItemDisplay(
               _quantity,
               'Footlong',
+              isFootlong: true,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: _increaseQuantity,
+                  onPressed: _quantity < widget.maxQuantity ? _increaseQuantity : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal,
                     foregroundColor: Colors.white,
@@ -106,14 +107,13 @@ class _OrderScreenState extends State<OrderScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   ),
                   child: const Text('Add'),
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
-                  onPressed: _decreaseQuantity,
+                  onPressed: _quantity > 0 ? _decreaseQuantity : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.redAccent,
                     foregroundColor: Colors.white,
@@ -121,8 +121,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   ),
                   child: const Text('Remove'),
                 ),
@@ -138,13 +137,20 @@ class _OrderScreenState extends State<OrderScreen> {
 class OrderItemDisplay extends StatelessWidget {
   final int quantity;
   final String itemType;
+  final bool isFootlong;
 
-  const OrderItemDisplay(this.quantity, this.itemType, {super.key});
+  const OrderItemDisplay(
+    this.quantity,
+    this.itemType, {
+    super.key,
+    required this.isFootlong,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final sandwichType = isFootlong ? 'Footlong' : 'Six-inch';
     return Text(
-      '$quantity $itemType sandwich(es): ${'🥪' * quantity}',
+      '$quantity $sandwichType sandwich(es): ${'🥪' * quantity}',
       style: const TextStyle(fontSize: 16, color: Colors.black),
       textAlign: TextAlign.center,
     );
