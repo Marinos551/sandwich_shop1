@@ -9,12 +9,12 @@ void main() {
       // Build the app
       await tester.pumpWidget(const App());
 
-      // Verify initial state is Footlong
-      expect(find.text('Footlong'), findsOneWidget);
-      expect(find.text('Six-inch'), findsOneWidget);
+      // Verify initial state labels (use lowercase as in the app)
+      expect(find.text('footlong'), findsOneWidget);
+      expect(find.text('six-inch'), findsOneWidget);
 
-      // Tap the Six-inch button to switch sandwich size
-      await tester.tap(find.byType(ToggleButtons));
+      // Tap the sandwich-type Switch by Key to switch sandwich size
+      await tester.tap(find.byKey(const Key('sandwichType_switch')));
       await tester.pumpAndSettle();
 
       // Verify the size changed by checking the order display
@@ -34,14 +34,14 @@ void main() {
               (widget.child as Text).data == 'Add');
 
       // Initial quantity should be 0
-      expect(find.text('0 Footlong sandwich(es)'), findsOneWidget);
+      expect(find.text('0 white footlong sandwich(es): '), findsOneWidget);
 
       // Tap Add button
       await tester.tap(addButton);
       await tester.pumpAndSettle();
 
       // Quantity should increase to 1
-      expect(find.text('1 Footlong sandwich(es)'), findsOneWidget);
+      expect(find.text('1 white footlong sandwich(es): 🥪'), findsOneWidget);
     });
 
     testWidgets('Remove button decreases quantity', (WidgetTester tester) async {
@@ -66,14 +66,14 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify quantity is 2
-      expect(find.text('2 Footlong sandwich(es)'), findsOneWidget);
+      expect(find.text('2 white footlong sandwich(es): 🥪🥪'), findsOneWidget);
 
       // Remove 1 sandwich
       await tester.tap(removeButton);
       await tester.pumpAndSettle();
 
       // Verify quantity is 1
-      expect(find.text('1 Footlong sandwich(es)'), findsOneWidget);
+      expect(find.text('1 white footlong sandwich(es): 🥪'), findsOneWidget);
     });
 
     testWidgets('Add button disables at maximum quantity',
@@ -93,7 +93,7 @@ void main() {
       }
 
       // Verify quantity is at max
-      expect(find.text('5 Footlong sandwich(es)'), findsOneWidget);
+      expect(find.text('5 white footlong sandwich(es): 🥪🥪🥪🥪🥪'), findsOneWidget);
 
       // Try to add one more - button should be disabled
       final disabledAddButton = find.byWidgetPredicate((widget) =>

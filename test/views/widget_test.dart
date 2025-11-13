@@ -175,7 +175,8 @@ void main() {
     await tester.pumpWidget(const App());
     await tester.pumpAndSettle();
 
-    final switchFinder = find.byType(Switch);
+    // Find the sandwich-type Switch by its Key to avoid ambiguity with the toasted Switch
+    final switchFinder = find.byKey(const Key('sandwichType_switch'));
     expect(switchFinder, findsOneWidget);
 
     // Verify initial switch value is true and "footlong" is shown
