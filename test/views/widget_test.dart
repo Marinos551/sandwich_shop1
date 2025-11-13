@@ -168,4 +168,28 @@ void main() {
       expect(find.text('Note: Lots of lettuce'), findsOneWidget);
     });
   });
+
+  testWidgets('Switch toggles between six-inch and footlong',
+      (WidgetTester tester) async {
+    // Build the app
+    await tester.pumpWidget(const App());
+    await tester.pumpAndSettle();
+
+    final switchFinder = find.byType(Switch);
+    expect(switchFinder, findsOneWidget);
+
+    // Verify initial switch value is true and "footlong" is shown
+    final Switch initialSwitch = tester.widget<Switch>(switchFinder);
+    expect(initialSwitch.value, isTrue);
+    expect(find.text('footlong'), findsWidgets);
+
+    // Tap the switch to toggle
+    await tester.tap(switchFinder);
+    await tester.pumpAndSettle();
+
+    // Verify switch value changed and "six-inch" is shown
+    final Switch toggledSwitch = tester.widget<Switch>(switchFinder);
+    expect(toggledSwitch.value, isFalse);
+    expect(find.text('six-inch'), findsWidgets);
+  });
 }
