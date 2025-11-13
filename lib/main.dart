@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sandwich_shop/views/app_styles.dart';
 import 'package:sandwich_shop/repositories/order_repository.dart';
+import 'package:sandwich_shop/repositories/pricing_repository.dart';
 
 enum BreadType { white, wheat, wholemeal }
 
@@ -35,6 +36,7 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   late final OrderRepository _orderRepository;
+  late final PricingRepository _pricingRepository;
   final TextEditingController _notesController = TextEditingController();
   bool _isFootlong = true;
   bool _isToasted = false;
@@ -44,6 +46,10 @@ class _OrderScreenState extends State<OrderScreen> {
   void initState() {
     super.initState();
     _orderRepository = OrderRepository(maxQuantity: widget.maxQuantity);
+    _pricingRepository = PricingRepository(
+      sixInchPrice: 7.0,
+      footlongPrice: 11.0,
+    );
     _notesController.addListener(() {
       setState(() {});
     });
@@ -105,6 +111,11 @@ class _OrderScreenState extends State<OrderScreen> {
       noteForDisplay = _notesController.text;
     }
 
+    double totalPrice = _pricingRepository.calculateTotal(
+      _orderRepository.quantity,
+      _isFootlong,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -121,6 +132,7 @@ class _OrderScreenState extends State<OrderScreen> {
               itemType: sandwichType,
               breadType: _selectedBreadType,
               orderNote: noteForDisplay,
+              totalPrice: totalPrice,
             ),
             const SizedBox(height: 20),
             Row(
@@ -234,6 +246,7 @@ class OrderItemDisplay extends StatelessWidget {
   final String itemType;
   final BreadType breadType;
   final String orderNote;
+  final double totalPrice;
 
   const OrderItemDisplay({
     super.key,
@@ -241,6 +254,7 @@ class OrderItemDisplay extends StatelessWidget {
     required this.itemType,
     required this.breadType,
     required this.orderNote,
+    required this.totalPrice,
   });
 
   @override
@@ -257,6 +271,11 @@ class OrderItemDisplay extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           'Note: $orderNote',
+          style: normalText,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Total: £${totalPrice.toStringAsFixed(2)}',
           style: normalText,
         ),
       ],
