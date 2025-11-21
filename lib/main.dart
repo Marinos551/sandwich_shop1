@@ -14,11 +14,9 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    return const MaterialApp(
       title: 'Sandwich Shop App',
-      theme: ThemeData(useMaterial3: false),
-      home: const OrderScreen(maxQuantity: 5),
+      home: OrderScreen(maxQuantity: 5),
     );
   }
 }
@@ -36,20 +34,16 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   late final OrderRepository _orderRepository;
-  late final PricingRepository _pricingRepository;
   final TextEditingController _notesController = TextEditingController();
   bool _isFootlong = true;
-  bool _isToasted = false;
   BreadType _selectedBreadType = BreadType.white;
+  late final PricingRepository _pricingRepository;
 
   @override
   void initState() {
     super.initState();
     _orderRepository = OrderRepository(maxQuantity: widget.maxQuantity);
-    _pricingRepository = PricingRepository(
-      sixInchPrice: 7.0,
-      footlongPrice: 11.0,
-    );
+    _pricingRepository = PricingRepository();
     _notesController.addListener(() {
       setState(() {});
     });
@@ -99,6 +93,11 @@ class _OrderScreenState extends State<OrderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double totalPrice = _pricingRepository.calculatePrice(
+      quantity: _orderRepository.quantity,
+      isFootlong: _isFootlong,
+    );
+
     String sandwichType = 'footlong';
     if (!_isFootlong) {
       sandwichType = 'six-inch';
@@ -110,11 +109,6 @@ class _OrderScreenState extends State<OrderScreen> {
     } else {
       noteForDisplay = _notesController.text;
     }
-
-    double totalPrice = _pricingRepository.calculateTotal(
-      _orderRepository.quantity,
-      _isFootlong,
-    );
 
     return Scaffold(
       appBar: AppBar(
@@ -132,7 +126,11 @@ class _OrderScreenState extends State<OrderScreen> {
               itemType: sandwichType,
               breadType: _selectedBreadType,
               orderNote: noteForDisplay,
-              totalPrice: totalPrice,
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Total Price: £${totalPrice.toStringAsFixed(2)}',
+              style: heading2,
             ),
             const SizedBox(height: 20),
             Row(
@@ -140,25 +138,11 @@ class _OrderScreenState extends State<OrderScreen> {
               children: [
                 const Text('six-inch', style: normalText),
                 Switch(
-                  key: const Key('sandwichType_switch'),
+                  key: const Key('size_switch'),
                   value: _isFootlong,
                   onChanged: _onSandwichTypeChanged,
                 ),
                 const Text('footlong', style: normalText),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('untoasted', style: normalText),
-                Switch(
-                  key: const Key('toasted_switch'),
-                  value: _isToasted,
-                  onChanged: (value) {
-                    setState(() => _isToasted = value);
-                  },
-                ),
-                const Text('toasted', style: normalText),
               ],
             ),
             const SizedBox(height: 10),
@@ -246,7 +230,6 @@ class OrderItemDisplay extends StatelessWidget {
   final String itemType;
   final BreadType breadType;
   final String orderNote;
-  final double totalPrice;
 
   const OrderItemDisplay({
     super.key,
@@ -254,7 +237,6 @@ class OrderItemDisplay extends StatelessWidget {
     required this.itemType,
     required this.breadType,
     required this.orderNote,
-    required this.totalPrice,
   });
 
   @override
@@ -271,11 +253,6 @@ class OrderItemDisplay extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           'Note: $orderNote',
-          style: normalText,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Total: £${totalPrice.toStringAsFixed(2)}',
           style: normalText,
         ),
       ],
